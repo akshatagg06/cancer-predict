@@ -9,6 +9,11 @@ Original file is located at
 
 #Description: This program detects breast cancer, based off of data.
 
+# import warnings filter
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
+
 """# import the packages/libraries"""
 
 #import libraries 
@@ -21,7 +26,7 @@ import seaborn as sns
 
 #Load the data 
 from google.colab import files
-uploaded = files.upload() 
+uploaded = files.upload()
 
 # Use to load data on Google Colab 
 df = pd.read_csv('data.csv') 
@@ -142,16 +147,21 @@ model = models(X_train,Y_train)
 """Get performance metrics"""
 
 from sklearn.metrics import confusion_matrix
+
 for i in range(len(model)):
-  cm = confusion_matrix(Y_test, model[i].predict(X_test))
-  
+  # confusion matrix
+  fig, ax = plt.subplots()
+  sns.heatmap(confusion_matrix(Y_test, model[i].predict(X_test), normalize='true'), annot=True, ax=ax)
+  ax.set_title("Confusion Matrix")
+  plt.show()
+
+  cm = confusion_matrix(Y_test, model[i].predict(X_test))  
   TN = cm[0][0]
   TP = cm[1][1]
   FN = cm[1][0]
   FP = cm[0][1]
-  
-  print(cm)
-  print('Model[{}] Testing Accuracy = "{}!"'.format(i,  (TP + TN) / (TP + TN + FN + FP)))
+  print('Model[{}] Testing Accuracy = "{}"'.format(i,  (TP + TN) / (TP + TN + FN + FP)))
+  print()# Print a new line
   print()# Print a new line
 
 #Print Prediction of Random Forest Classifier model
